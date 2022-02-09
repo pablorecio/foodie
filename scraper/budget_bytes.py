@@ -20,12 +20,14 @@ class BudgetBytesSpider(scrapy.Spider):
                 'unit': ingredient_li.css('.wprm-recipe-ingredient-unit::text').get(),
                 'name': ingredient_li.css('.wprm-recipe-ingredient-name::text').get()
             })
-            recipe['steps'] = [
-                step.get()
-                for step in response.css(
-                    ".wprm-recipe-instructions .wprm-recipe-instruction-text span::text"
-                )
-            ]
+
+            selector = ".wprm-recipe-instructions .wprm-recipe-instruction-text span::text"
+
+            # Some steps do not have a span
+            if not response.css(selector):
+                selector = ".wprm-recipe-instructions .wprm-recipe-instruction-text::text"
+
+            recipe['steps'] = [step.get() for step in response.css(selector)]
             send_event(self.producer, recipe)
 
         for recipe_page in response.css('.post .more a'):
