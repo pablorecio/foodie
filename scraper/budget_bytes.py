@@ -9,7 +9,7 @@ class BudgetBytesSpider(scrapy.Spider):
     producer = get_producer()
 
     def parse(self, response):
-        recipe = {}
+        recipe = {'url': response.url}
 
         recipe['ingredients'] = []
         recipe['steps'] = []
